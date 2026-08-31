@@ -1,0 +1,338 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": { "type": "grafana", "uid": "-- Grafana --" },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      },
+      {
+        "name": "Fire alerts",
+        "datasource": { "type": "influxdb", "uid": "influxdb" },
+        "enable": true,
+        "hide": false,
+        "iconColor": "red",
+        "target": {
+          "query": "from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"fire_alerts\" and r._field == \"message\")\n  |> keep(columns: [\"_time\", \"_value\", \"node_id\"])",
+          "refId": "Anno"
+        }
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": true,
+  "panels": [
+    {
+      "id": 100,
+      "type": "row",
+      "title": "Status",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "panels": []
+    },
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Max temperature",
+      "datasource": { "type": "influxdb", "uid": "influxdb" },
+      "gridPos": { "h": 4, "w": 6, "x": 0, "y": 1 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "orange", "value": 38 },
+            { "color": "red", "value": 45 }
+          ] },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["max"], "fields": "", "values": false },
+        "colorMode": "background", "graphMode": "area", "justifyMode": "center",
+        "textMode": "value_and_name", "orientation": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb" },
+          "query": "from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sensor_readings\" and r._field == \"temperature\")\n  |> filter(fn: (r) => r.node_id =~ /${node:regex}/)\n  |> group()",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Max smoke",
+      "datasource": { "type": "influxdb", "uid": "influxdb" },
+      "gridPos": { "h": 4, "w": 6, "x": 6, "y": 1 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "conppm",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "orange", "value": 1000 },
+            { "color": "red", "value": 1500 }
+          ] },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["max"], "fields": "", "values": false },
+        "colorMode": "background", "graphMode": "area", "justifyMode": "center",
+        "textMode": "value_and_name", "orientation": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb" },
+          "query": "from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sensor_readings\" and r._field == \"smoke_ppm\")\n  |> filter(fn: (r) => r.node_id =~ /${node:regex}/)\n  |> group()",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "stat",
+      "title": "Max CO",
+      "datasource": { "type": "influxdb", "uid": "influxdb" },
+      "gridPos": { "h": 4, "w": 6, "x": 12, "y": 1 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "conppm",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "orange", "value": 200 },
+            { "color": "red", "value": 400 }
+          ] },
+          "mappings": []
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["max"], "fields": "", "values": false },
+        "colorMode": "background", "graphMode": "area", "justifyMode": "center",
+        "textMode": "value_and_name", "orientation": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb" },
+          "query": "from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sensor_readings\" and r._field == \"co_ppm\")\n  |> filter(fn: (r) => r.node_id =~ /${node:regex}/)\n  |> group()",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "stat",
+      "title": "Active alerts",
+      "datasource": { "type": "influxdb", "uid": "influxdb" },
+      "gridPos": { "h": 4, "w": 6, "x": 18, "y": 1 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "none",
+          "color": { "mode": "thresholds" },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "red", "value": 1 }
+          ] },
+          "mappings": [],
+          "noValue": "0"
+        },
+        "overrides": []
+      },
+      "options": {
+        "reduceOptions": { "calcs": ["count"], "fields": "", "values": false },
+        "colorMode": "background", "graphMode": "area", "justifyMode": "center",
+        "textMode": "value_and_name", "orientation": "auto"
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb" },
+          "query": "from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"fire_alerts\" and r._field == \"breach_count\")\n  |> filter(fn: (r) => r.node_id =~ /${node:regex}/)\n  |> group()",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 101,
+      "type": "row",
+      "title": "Live readings",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 5 },
+      "panels": []
+    },
+    {
+      "id": 5,
+      "type": "timeseries",
+      "title": "Temperature by node",
+      "datasource": { "type": "influxdb", "uid": "influxdb" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius",
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line", "lineInterpolation": "smooth", "lineWidth": 2,
+            "fillOpacity": 10, "showPoints": "never", "gradientMode": "none",
+            "thresholdsStyle": { "mode": "line" }, "axisPlacement": "auto", "spanNulls": true
+          },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "red", "value": 45 }
+          ] }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb" },
+          "query": "from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sensor_readings\" and r._field == \"temperature\")\n  |> filter(fn: (r) => r.node_id =~ /${node:regex}/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> keep(columns: [\"_time\", \"_value\", \"node_id\"])\n  |> group(columns: [\"node_id\"])",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "timeseries",
+      "title": "Smoke by node",
+      "datasource": { "type": "influxdb", "uid": "influxdb" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "conppm",
+          "color": { "mode": "palette-classic" },
+          "custom": {
+            "drawStyle": "line", "lineInterpolation": "smooth", "lineWidth": 2,
+            "fillOpacity": 10, "showPoints": "never", "gradientMode": "none",
+            "thresholdsStyle": { "mode": "line" }, "axisPlacement": "auto", "spanNulls": true
+          },
+          "thresholds": { "mode": "absolute", "steps": [
+            { "color": "green", "value": null },
+            { "color": "red", "value": 1500 }
+          ] }
+        },
+        "overrides": []
+      },
+      "options": {
+        "legend": { "displayMode": "list", "placement": "bottom", "calcs": [] },
+        "tooltip": { "mode": "multi", "sort": "desc" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb" },
+          "query": "from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sensor_readings\" and r._field == \"smoke_ppm\")\n  |> filter(fn: (r) => r.node_id =~ /${node:regex}/)\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\n  |> keep(columns: [\"_time\", \"_value\", \"node_id\"])\n  |> group(columns: [\"node_id\"])",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 102,
+      "type": "row",
+      "title": "Fire signals & alerts",
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 14 },
+      "panels": []
+    },
+    {
+      "id": 7,
+      "type": "state-timeline",
+      "title": "Flame detection by node",
+      "datasource": { "type": "influxdb", "uid": "influxdb" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 15 },
+      "fieldConfig": {
+        "defaults": {
+          "color": { "mode": "thresholds" },
+          "custom": { "lineWidth": 0, "fillOpacity": 90 },
+          "thresholds": { "mode": "absolute", "steps": [ { "color": "green", "value": null } ] },
+          "mappings": [
+            { "type": "value", "options": {
+              "0": { "text": "clear", "color": "green", "index": 0 },
+              "1": { "text": "FLAME", "color": "red", "index": 1 }
+            } }
+          ]
+        },
+        "overrides": []
+      },
+      "options": {
+        "showValue": "never", "rowHeight": 0.9, "mergeValues": true, "alignValue": "center",
+        "legend": { "displayMode": "list", "placement": "bottom" },
+        "tooltip": { "mode": "single" }
+      },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb" },
+          "query": "from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"sensor_readings\" and r._field == \"flame_detected\")\n  |> filter(fn: (r) => r.node_id =~ /${node:regex}/)\n  |> aggregateWindow(every: v.windowPeriod, fn: max, createEmpty: false)\n  |> keep(columns: [\"_time\", \"_value\", \"node_id\"])\n  |> group(columns: [\"node_id\"])",
+          "refId": "A"
+        }
+      ]
+    },
+    {
+      "id": 8,
+      "type": "table",
+      "title": "Recent fire alerts",
+      "datasource": { "type": "influxdb", "uid": "influxdb" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 15 },
+      "fieldConfig": {
+        "defaults": { "custom": { "align": "auto", "filterable": false }, "noValue": "No alerts yet" },
+        "overrides": []
+      },
+      "options": { "showHeader": true, "sortBy": [ { "displayName": "_time", "desc": true } ] },
+      "targets": [
+        {
+          "datasource": { "type": "influxdb", "uid": "influxdb" },
+          "query": "from(bucket: \"sensors\")\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\n  |> filter(fn: (r) => r._measurement == \"fire_alerts\" and r._field == \"message\")\n  |> filter(fn: (r) => r.node_id =~ /${node:regex}/)\n  |> keep(columns: [\"_time\", \"node_id\", \"_value\"])\n  |> rename(columns: {_value: \"alert\"})\n  |> sort(columns: [\"_time\"], desc: true)",
+          "refId": "A"
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 39,
+  "style": "dark",
+  "tags": ["wildfire"],
+  "templating": {
+    "list": [
+      {
+        "name": "node",
+        "label": "Node",
+        "type": "query",
+        "datasource": { "type": "influxdb", "uid": "influxdb" },
+        "definition": "schema.tagValues(bucket: \"sensors\", tag: \"node_id\")",
+        "query": "import \"influxdata/influxdb/schema\"\nschema.tagValues(bucket: \"sensors\", tag: \"node_id\")",
+        "includeAll": true,
+        "allValue": ".*",
+        "multi": true,
+        "refresh": 1,
+        "sort": 1,
+        "hide": 0,
+        "current": { "selected": true, "text": ["All"], "value": ["$__all"] },
+        "options": [],
+        "regex": ""
+      }
+    ]
+  },
+  "time": { "from": "now-30m", "to": "now" },
+  "timepicker": {},
+  "timezone": "",
+  "title": "Wildfire Detection",
+  "uid": "wildfire-main",
+  "version": 3,
+  "weekStart": ""
+}
